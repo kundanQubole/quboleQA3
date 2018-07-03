@@ -1,0 +1,310 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n1) This notebook assumes that the user has Python 2.7 enabled/or as default in the cluster\nFor details please refer to http://docs.qubole.com/en/latest/faqs/hadoop-clusters/can-use-python-2-7-hadoop-tasks-2.html\nIf the default version on your cluster is not Python 2.7, please add the folloing code to the Cluster node bootstrap script:\n\n    source /usr/lib/hustler/bin/qubole-bash-lib.sh\n    make-python2.7-system-default\n\n2) The Python libraries used in this notebook are Pandas and Plotly. Please add the folloing code to the Cluster node bootstrap script:\n\n    pip install pandas\n    pip install \u0027plotly\u003c\u003d2.0\u0027\n\n3)  To use pyspark, we have two options. Either use %pyspark as the first line in each paragrpah or in the Interpreter settings, change the proprty to the following:\n   \n    zeppelin.default.interpreter\tpyspark",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 7:45:56 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1497815041013_-665738495",
+      "id": "20170618-194401_260347312_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003cp\u003e1) This notebook assumes that the user has Python 2.7 enabled/or as default in the cluster\u003cbr/\u003eFor details please refer to \u003ca href\u003d\"http://docs.qubole.com/en/latest/faqs/hadoop-clusters/can-use-python-2-7-hadoop-tasks-2.html\"\u003ehttp://docs.qubole.com/en/latest/faqs/hadoop-clusters/can-use-python-2-7-hadoop-tasks-2.html\u003c/a\u003e\u003cbr/\u003eIf the default version on your cluster is not Python 2.7, please add the folloing code to the Cluster node bootstrap script:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003esource /usr/lib/hustler/bin/qubole-bash-lib.sh\nmake-python2.7-system-default\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e2) The Python libraries used in this notebook are Pandas and Plotly. Please add the folloing code to the Cluster node bootstrap script:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003epip install pandas\npip install \u0026#39;plotly\u0026lt;\u003d2.0\u0026#39;\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e3) To use pyspark, we have two options. Either use %pyspark as the first line in each paragrpah or in the Interpreter settings, change the proprty to the following:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003ezeppelin.default.interpreter    pyspark\n\u003c/code\u003e\u003c/pre\u003e\n\u003c/div\u003e"
+      },
+      "dateCreated": "Jun 18, 2017 7:44:01 PM",
+      "dateSubmitted": "Jul 3, 2018 7:45:56 AM",
+      "dateStarted": "Jul 3, 2018 7:45:56 AM",
+      "dateFinished": "Jul 3, 2018 7:45:56 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nimport plotly\nimport plotly.graph_objs as go\n\nimport pandas as pd\nimport math\n\n\ndef plot(plot_dic, height\u003d500, width\u003d1000, **kwargs):\n    kwargs[\u0027output_type\u0027] \u003d \u0027div\u0027\n    plot_str \u003d plotly.offline.plot(plot_dic, **kwargs)\n    print(\u0027%%angular \u003cdiv style\u003d\"height: %ipx; width: %spx\"\u003e %s \u003c/div\u003e\u0027 % (height, width, plot_str))\n\ndata \u003d pd.read_csv(\"https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv\")\ndf_2007 \u003d data[data[\u0027year\u0027]\u003d\u003d2007]\ndf_2007 \u003d df_2007.sort_values([\u0027continent\u0027, \u0027country\u0027])\nslope \u003d 2.666051223553066e-05\nhover_text \u003d []\nbubble_size \u003d []\n\nfor index, row in df_2007.iterrows():\n    hover_text.append(\u0027Country: {country}\u003cbr\u003e\u0027+\n                      \u0027Life Expectancy: {lifeExp}\u003cbr\u003e\u0027+\n                      \u0027GDP per capita: {gdp}\u003cbr\u003e\u0027+\n                      \u0027Population: {pop}\u003cbr\u003e\u0027+\n                      \u0027Year: {year}\u0027.format(country\u003drow[\u0027country\u0027],\n                                            lifeExp\u003drow[\u0027lifeExp\u0027],\n                                            gdp\u003drow[\u0027gdpPercap\u0027],\n                                            pop\u003drow[\u0027pop\u0027],\n                                            year\u003drow[\u0027year\u0027]))\n    bubble_size.append(math.sqrt(row[\u0027pop\u0027]*slope))\n\ndf_2007[\u0027text\u0027] \u003d hover_text\ndf_2007[\u0027size\u0027] \u003d bubble_size\n\ntrace0 \u003d go.Scatter(\n    x\u003ddf_2007[\u0027gdpPercap\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Africa\u0027],\n    y\u003ddf_2007[\u0027lifeExp\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Africa\u0027],\n    mode\u003d\u0027markers\u0027,\n    name\u003d\u0027Africa\u0027,\n    text\u003ddf_2007[\u0027text\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Africa\u0027],\n    marker\u003ddict(\n        symbol\u003d\u0027circle\u0027,\n        sizemode\u003d\u0027diameter\u0027,\n        sizeref\u003d0.85,\n        size\u003ddf_2007[\u0027size\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Africa\u0027],\n        line\u003ddict(\n            width\u003d2\n        ),\n    )\n)\ntrace1 \u003d go.Scatter(\n    x\u003ddf_2007[\u0027gdpPercap\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Americas\u0027],\n    y\u003ddf_2007[\u0027lifeExp\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Americas\u0027],\n    mode\u003d\u0027markers\u0027,\n    name\u003d\u0027Americas\u0027,\n    text\u003ddf_2007[\u0027text\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Americas\u0027],\n    marker\u003ddict(\n        sizemode\u003d\u0027diameter\u0027,\n        sizeref\u003d0.85,\n        size\u003ddf_2007[\u0027size\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Americas\u0027],\n        line\u003ddict(\n            width\u003d2\n        ),\n    )\n)\ntrace2 \u003d go.Scatter(\n    x\u003ddf_2007[\u0027gdpPercap\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Asia\u0027],\n    y\u003ddf_2007[\u0027lifeExp\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Asia\u0027],\n    mode\u003d\u0027markers\u0027,\n    name\u003d\u0027Asia\u0027,\n    text\u003ddf_2007[\u0027text\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Asia\u0027],\n    marker\u003ddict(\n        sizemode\u003d\u0027diameter\u0027,\n        sizeref\u003d0.85,\n        size\u003ddf_2007[\u0027size\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Asia\u0027],\n        line\u003ddict(\n            width\u003d2\n        ),\n    )\n)\ntrace3 \u003d go.Scatter(\n    x\u003ddf_2007[\u0027gdpPercap\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Europe\u0027],\n    y\u003ddf_2007[\u0027lifeExp\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Europe\u0027],\n    mode\u003d\u0027markers\u0027,\n    name\u003d\u0027Europe\u0027,\n    text\u003ddf_2007[\u0027text\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Europe\u0027],\n    marker\u003ddict(\n        sizemode\u003d\u0027diameter\u0027,\n        sizeref\u003d0.85,\n        size\u003ddf_2007[\u0027size\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Europe\u0027],\n        line\u003ddict(\n            width\u003d2\n        ),\n    )\n)\ntrace4 \u003d go.Scatter(\n    x\u003ddf_2007[\u0027gdpPercap\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Oceania\u0027],\n    y\u003ddf_2007[\u0027lifeExp\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Oceania\u0027],\n    mode\u003d\u0027markers\u0027,\n    name\u003d\u0027Oceania\u0027,\n    text\u003ddf_2007[\u0027text\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Oceania\u0027],\n    marker\u003ddict(\n        sizemode\u003d\u0027diameter\u0027,\n        sizeref\u003d0.85,\n        size\u003ddf_2007[\u0027size\u0027][df_2007[\u0027continent\u0027] \u003d\u003d \u0027Oceania\u0027],\n        line\u003ddict(\n            width\u003d2\n        ),\n    )\n)\n\ndata \u003d [trace0, trace1, trace2, trace3, trace4]\nlayout \u003d go.Layout(\n    title\u003d\u0027Life Expectancy v. Per Capita GDP, 2007\u0027,\n    xaxis\u003ddict(\n        title\u003d\u0027GDP per capita (2000 dollars)\u0027,\n        gridcolor\u003d\u0027rgb(255, 255, 255)\u0027,\n        range\u003d[2.003297660701705, 5.191505530708712],\n        type\u003d\u0027log\u0027,\n        zerolinewidth\u003d1,\n        ticklen\u003d5,\n        gridwidth\u003d2,\n    ),\n    yaxis\u003ddict(\n        title\u003d\u0027Life Expectancy (years)\u0027,\n        gridcolor\u003d\u0027rgb(255, 255, 255)\u0027,\n        range\u003d[36.12621671352166, 91.72921793264332],\n        zerolinewidth\u003d1,\n        ticklen\u003d5,\n        gridwidth\u003d2,\n    ),\n    paper_bgcolor\u003d\u0027rgb(243, 243, 243)\u0027,\n    plot_bgcolor\u003d\u0027rgb(243, 243, 243)\u0027,\n)\n\nfig \u003d go.Figure(data\u003ddata, layout\u003dlayout)\nplot(fig,show_link\u003dFalse)",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 7:45:56 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "paragraphProgress": {
+        "jobs": [],
+        "numCompletedTasks": 0,
+        "numTasks": 0,
+        "truncated": false
+      },
+      "version": "v0",
+      "jobName": "paragraph_1470703254842_1521324373",
+      "id": "20160809-004054_2102315920_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": "Traceback (most recent call last):\n  File \"/tmp/zeppelin_pyspark-625169740833630369.py\", line 302, in \u003cmodule\u003e\n    raise Exception(traceback.format_exc())\nException: Traceback (most recent call last):\n  File \"/tmp/zeppelin_pyspark-625169740833630369.py\", line 295, in \u003cmodule\u003e\n    exec(code)\n  File \"\u003cstdin\u003e\", line 1, in \u003cmodule\u003e\nImportError: No module named plotly\n\n"
+      },
+      "dateCreated": "Aug 9, 2016 12:40:54 AM",
+      "dateSubmitted": "Jul 3, 2018 7:45:56 AM",
+      "dateStarted": "Jul 3, 2018 7:45:59 AM",
+      "dateFinished": "Jul 3, 2018 7:46:51 AM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nimport socket\nsc.parallelize(range(1, 3)).map(lambda x: (socket.gethostname(), sys.executable)).collect()",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 7:50:08 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://azureqa.qubole.net/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.10.0.90%3A8088%2Fproxy%2Fapplication_1530603610525_0001/jobs/job?spark\u003dtrue\u0026id\u003d0"
+          ],
+          "interpreterSettingId": "2DH6J8K3874331530603450909"
+        }
+      },
+      "paragraphProgress": {
+        "jobs": [
+          {
+            "id": 0,
+            "jobUrl": "https://azureqa.qubole.net/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.10.0.90%3A8088%2Fproxy%2Fapplication_1530603610525_0001/jobs/job?spark\u003dtrue\u0026id\u003d0",
+            "numTasks": 2,
+            "numCompletedTasks": 0,
+            "stages": [
+              {
+                "id": 0,
+                "completed": false,
+                "stageUrl": "https://azureqa.qubole.net/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.10.0.90%3A8088%2Fproxy%2Fapplication_1530603610525_0001/stages/stage/?id\u003d0\u0026attempt\u003d0",
+                "numCompleteTasks": 0,
+                "numActiveTasks": 2,
+                "numFailedTasks": 0,
+                "numTotalTasks": 2
+              }
+            ],
+            "status": "Running"
+          }
+        ],
+        "numCompletedTasks": 0,
+        "numTasks": 2,
+        "truncated": false
+      },
+      "version": "v0",
+      "jobName": "paragraph_1470703375179_-620248778",
+      "id": "20160809-004255_640038320_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "[(\u0027azureqaqbolacc276cl7433slave11530603210\u0027, \u0027/bin/python\u0027), (\u0027azureqaqbolacc276cl7433slave11530603210\u0027, \u0027/bin/python\u0027)]\n"
+      },
+      "dateCreated": "Aug 9, 2016 12:42:55 AM",
+      "dateSubmitted": "Jul 3, 2018 7:50:08 AM",
+      "dateStarted": "Jul 3, 2018 7:50:08 AM",
+      "dateFinished": "Jul 3, 2018 7:50:13 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nimport sys\nsys.executable",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 7:51:03 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1530604079170_698642965",
+      "id": "20180703-074759_844372228_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "\u0027/usr/bin/python\u0027\n"
+      },
+      "dateCreated": "Jul 3, 2018 7:47:59 AM",
+      "dateSubmitted": "Jul 3, 2018 7:51:03 AM",
+      "dateStarted": "Jul 3, 2018 7:51:03 AM",
+      "dateFinished": "Jul 3, 2018 7:51:03 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 1000
+    },
+    {
+      "text": "%r\nldf \u003c- data.frame(age\u003d1)\ndf \u003c- createDataFrame(ldf)\ndf1 \u003c- dapplyCollect(\ndf,\nfunction(x) {\ncommandArgs()[1]\n})\ndf1",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 8:12:13 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/r"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://azureqa.qubole.net/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.10.0.90%3A8088%2Fproxy%2Fapplication_1530603610525_0001/jobs/job?spark\u003dtrue\u0026id\u003d1",
+            "https://azureqa.qubole.net/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.10.0.90%3A8088%2Fproxy%2Fapplication_1530603610525_0001/jobs/job?spark\u003dtrue\u0026id\u003d2"
+          ],
+          "interpreterSettingId": "2DH6J8K3874331530603450909"
+        }
+      },
+      "version": "v0",
+      "jobName": "paragraph_1530604263847_-1518201932",
+      "id": "20180703-075103_1520167409_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "\n [,1]                     \n\n\n[1,] “/usr/lib64/R/bin/exec/R”\n\n\n\n"
+      },
+      "dateCreated": "Jul 3, 2018 7:51:03 AM",
+      "dateSubmitted": "Jul 3, 2018 8:12:13 AM",
+      "dateStarted": "Jul 3, 2018 8:12:13 AM",
+      "dateFinished": "Jul 3, 2018 8:12:23 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 1000
+    },
+    {
+      "text": "%r\nlibrary(SparkR)\nprint(commandArgs()[1])",
+      "user": "kundank+9@qubole.com",
+      "dateUpdated": "Jul 3, 2018 8:12:37 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/r"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1530605516046_1466287064",
+      "id": "20180703-081156_1532170544_q_SAFR85KMK51530603188",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "\n[1] “/usr/lib64/R/bin/exec/R”\n\n\n\n"
+      },
+      "dateCreated": "Jul 3, 2018 8:11:56 AM",
+      "dateSubmitted": "Jul 3, 2018 8:12:37 AM",
+      "dateStarted": "Jul 3, 2018 8:12:37 AM",
+      "dateFinished": "Jul 3, 2018 8:12:37 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 1000
+    },
+    {
+      "text": "",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1530605557469_1511180092",
+      "id": "20180703-081237_376028835_q_SAFR85KMK51530603188",
+      "dateCreated": "Jul 3, 2018 8:12:37 AM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 1000
+    }
+  ],
+  "name": "202",
+  "id": "SAFR85KMK51530603188",
+  "angularObjects": {
+    "2DKNU3WY174331530603450943:shared_process": [],
+    "2DH6J8K3874331530603450909:shared_process": [],
+    "2DKJ6WC2974331530603450923:shared_process": [],
+    "2DM1WVPUF74331530603450926:shared_process": []
+  },
+  "config": {
+    "isDashboard": false,
+    "defaultLang": ""
+  },
+  "info": {},
+  "source": "FCN"
+}
